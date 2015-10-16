@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Object chain ancestor links prototype</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Object chain ancestor links prototype</h1>
+
+    <p>
+    Imagine you are livestreaming content onto
+    <a href="https://ipfs.io/">IPFS</a>. You could periodically push a new HEAD
+    object which links to the previous object, resulting in a linked list. You
+    would have 1 link in each object after the root and it would take
+    O(<em>n</em>) steps to traverse back to any object.
+    </p>
+
+    <p>
+    We can do better with little overhead. The algorithm visualized here has
+    the following properties:
+    </p>
+
+    <ul>
+      <li>
+        It adds O(log <em>n</em>) links along with their offsets to each HEAD
+        object.
+      </li>
+      <li>
+        It only needs to inspect the immediate parent object to generate the
+        links.
+      </li>
+      <li>Traversing back to any object takes O(log <em>n</em>) steps.</li>
+      <li>
+        You immediately get a bunch of pointers to the history allowing you to
+        start downloading the history in parallel if you want to.
+      </li>
+    </ul>
+
+    <p>
+    HEAD is visualized with a red background, its links are visualized with a
+    black border. Exponentially growing buckets are visualized with an
+    alternating background color. The algorithm tries to have one link in each
+    bucket.
+    </p>
+
+    <footer><p><address>– ion</address></p></footer>
+
+    <script src="elm.min.js"></script>
+    <script>
+      Elm.fullscreen(Elm.Main);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+body {
+  max-width: 40em;
+}
+
+.object-chain {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: right;
+}
+
+.object-chain ul {
+  display: inline;
+  padding: 0;
+  margin: 0;
+}
+
+.object-chain li {
+  display: inline;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.object-chain > ul > li:nth-child(odd) {
+  background-color: #ddf;
+}
+
+.object-chain > ul > li:nth-child(even) {
+  background-color: #dfd;
+}
+
+.object-chain .object-bucket {
+  margin: 0 0.2em;
+}
+
+.object-chain .object-head, .object-chain .object-ancestor {
+  padding: 0 0.2em;
+  margin: 0 0.2em;
+  font-family: monospace;
+}
+
+.object-chain .object-head {
+  color: white;
+  background-color: #d00 !important;
+  outline: 0.2em solid #d00;
+  font-weight: bold;
+}
+
+.object-chain .object-ancestor {
+}
+
+.object-chain .object-linked {
+  outline: 0.2em solid black;
+  font-weight: bold;
+}
+
+.object-chain .object-removed {
+  outline: 0.2em dashed #d00 !important;
+  text-decoration: line-through;
+  color: #d00;
+}
+
+.object-chain button {
+  background-color: inherit;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  text-decoration: inherit;
+  cursor: pointer;
+}
