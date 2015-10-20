@@ -1,6 +1,11 @@
 module Object
   ( Object (..)
   , ID
+
+  , id
+  , parent
+  , ancestors
+
   , initial
   , add
   , removeLink
@@ -19,36 +24,49 @@ type Object = Object { id        : ID
 
 type alias ID = Int
 
+
+id : Object -> ID
+id (Object o) = o.id
+
+parent : Object -> Maybe Object
+parent (Object o) = o.parent
+
+ancestors : Object -> EB.ExponentialBuckets ID
+ancestors (Object o) = o.ancestors
+
+
 initial : ID -> Object
-initial id =
-  Object { id = id
+initial id_ =
+  Object { id = id_
          , parent = Nothing
          , ancestors = EB.empty
          }
 
 add : ID -> Object -> Object
-add id (Object parent) =
-  Object { id = id
-         , parent = Just (Object parent)
-         , ancestors = EB.toList parent.ancestors
+add id_ parent =
+  Object { id = id_
+         , parent = Just parent
+         , ancestors = EB.toList (ancestors parent)
                     |> List.map (\(offset, obj) -> (offset + 1, obj))
-                    |> (::) (0, parent.id)
+                    |> (::) (0, id parent)
                     |> EB.fromList
                     |> EB.pruneBuckets
          }
 
 removeLink : Int -> Object -> Object
-removeLink offset (Object object) =
-  if offset > 0  -- Do not remove the parent.
-    then Object { object | ancestors <- EB.remove offset object.ancestors }
-    else Object object
+removeLink offset object =
+  case object of
+    Object o ->
+      if offset > 0  -- Do not remove the parent.
+        then Object { o | ancestors <- EB.remove offset o.ancestors }
+        else object
 
 doesLinkTo : Int -> Object -> Bool
-doesLinkTo offset (Object object) = EB.member offset object.ancestors
+doesLinkTo offset object = EB.member offset (ancestors object)
 
 toList : Object -> List Object
-toList (Object object) =
-  Object object ::
-    case object.parent of
-      Just parent -> toList parent
-      Nothing     -> []
+toList object =
+  object ::
+    case parent object of
+      Just parent_ -> toList parent_
+      Nothing      -> []
