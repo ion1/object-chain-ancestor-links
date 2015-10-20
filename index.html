@@ -3,28 +3,56 @@
   <head>
     <meta charset="utf-8">
     <title>Object chain ancestor links prototype</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <h1>Object chain ancestor links prototype</h1>
 
     <p>
-    Imagine you are livestreaming content onto
-    <a href="https://ipfs.io/">IPFS</a>. You could periodically push a new HEAD
-    object which links to the previous object, resulting in a linked list. You
-    would have 1 link in each object after the root and it would take
+    When livestreaming linear content onto <a href="https://ipfs.io/">IPFS</a>,
+    we can do better than a singly linked list which would require
     O(<em>n</em>) steps to traverse back to any object.
     </p>
 
     <p>
-    We can do better with little overhead. The algorithm visualized here has
-    the following properties:
+    The algorithm:
     </p>
 
     <ul>
       <li>
-        It adds O(log <em>n</em>) links along with their offsets to each HEAD
+        Store a list of links to ancestors along with their offsets in each
         object.
+      </li>
+      <li>
+        When adding a new object:
+        <ul>
+          <li>
+            Take the links from its parent and increment their offsets by one.
+          </li>
+          <li>Add the parent as a link at offset 0.</li>
+          <li>
+            For each exponentially growing bucket of ancestors:
+            <ul>
+              <li>Keep the link with the greatest offset.</li>
+              <li>
+                If the previous bucket ended up being empty, also keep the link
+                closest to it.
+              </li>
+              <li>Prune all other links from the bucket.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <p>The algorithm has the following properties:</p>
+
+    <ul>
+      <li>
+        It adds O(log <em>n</em>) links along with their offsets to each HEAD
+        object. (For example, at 1 GB with 250 kB chunks, new objects have
+        12-ish links to ancestors.)
       </li>
       <li>
         It only needs to inspect the immediate parent object to generate the
@@ -36,13 +64,6 @@
         start downloading the history in parallel if you want to.
       </li>
     </ul>
-
-    <p>
-    HEAD is visualized with a red background, its links are visualized with a
-    black border. Exponentially growing buckets are visualized with an
-    alternating background color. The algorithm tries to have one link in each
-    bucket.
-    </p>
 
     <footer><p><address>– ion</address></p></footer>
 
